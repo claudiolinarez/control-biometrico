@@ -1,280 +1,523 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>Enrolamiento Biométrico</title>
 
-  <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
+  <!-- FACE API -->
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js">
+  </script>
+
 
   <style>
+
     * {
       box-sizing: border-box;
     }
 
+
     body {
+
       margin: 0;
+
       padding: 20px;
-      font-family: Arial, Helvetica, sans-serif;
+
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
       background: #f2f4f7;
+
       color: #1f2937;
+
     }
+
 
     .contenedor {
+
       width: 100%;
+
       max-width: 700px;
+
       margin: 0 auto;
+
       background: white;
+
       border-radius: 16px;
+
       padding: 25px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+
+      box-shadow:
+        0 4px 20px
+        rgba(0,0,0,0.10);
+
     }
+
 
     h1 {
-      margin: 0 0 8px 0;
+
+      margin:
+        0 0 8px 0;
+
       text-align: center;
+
       font-size: 28px;
+
     }
+
 
     .subtitulo {
+
       text-align: center;
+
       color: #6b7280;
+
       margin-bottom: 25px;
+
     }
 
+
     label {
+
       display: block;
+
       font-weight: bold;
+
       margin-bottom: 8px;
+
     }
+
 
     select,
     button {
+
       width: 100%;
+
       padding: 14px;
+
       border-radius: 10px;
+
       font-size: 16px;
+
     }
+
 
     select {
-      border: 1px solid #d1d5db;
+
+      border:
+        1px solid #d1d5db;
+
       background: white;
+
       margin-bottom: 15px;
+
     }
+
 
     button {
+
       border: none;
+
       background: #111827;
+
       color: white;
+
       font-weight: bold;
+
       cursor: pointer;
+
       margin-top: 10px;
+
     }
+
 
     button:disabled {
+
       background: #9ca3af;
+
       cursor: not-allowed;
+
     }
+
 
     .camara {
+
       position: relative;
+
       width: 100%;
+
       margin-top: 20px;
+
       background: #111;
+
       border-radius: 14px;
+
       overflow: hidden;
+
       min-height: 300px;
+
       display: flex;
+
       justify-content: center;
+
       align-items: center;
+
     }
+
 
     video {
+
       width: 100%;
+
       max-height: 500px;
+
       object-fit: cover;
+
       display: none;
-      transform: scaleX(-1);
+
+      transform:
+        scaleX(-1);
+
     }
 
-    canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
 
     .mensaje {
+
       margin-top: 18px;
+
       padding: 14px;
+
       border-radius: 10px;
+
       text-align: center;
+
       font-weight: bold;
+
       background: #eef2ff;
+
       color: #3730a3;
+
     }
+
 
     .exito {
+
       background: #dcfce7;
+
       color: #166534;
+
     }
+
 
     .error {
+
       background: #fee2e2;
+
       color: #991b1b;
+
     }
+
 
     .estado {
+
       text-align: center;
+
       margin-top: 15px;
+
       font-size: 14px;
+
       color: #6b7280;
+
     }
 
+
     .instrucciones {
+
       margin-top: 20px;
+
       padding: 15px;
+
       background: #f9fafb;
+
       border-radius: 10px;
+
       font-size: 14px;
+
       line-height: 1.5;
+
     }
+
+
+    .resultado {
+
+      margin-top: 15px;
+
+      padding: 15px;
+
+      background: #f3f4f6;
+
+      border-radius: 10px;
+
+      display: none;
+
+    }
+
+
+    .resultado strong {
+
+      display: block;
+
+      margin-bottom: 5px;
+
+    }
+
   </style>
+
 </head>
+
 
 <body>
 
+
 <div class="contenedor">
 
-  <h1>🔐 Enrolamiento Biométrico</h1>
+
+  <h1>
+    🔐 Enrolamiento Biométrico
+  </h1>
+
 
   <div class="subtitulo">
     Registro facial del trabajador
   </div>
 
+
   <label for="personal">
     Seleccionar trabajador
   </label>
 
+
   <select id="personal">
-    <option value="">Cargando trabajadores...</option>
+
+    <option value="">
+      Cargando trabajadores...
+    </option>
+
   </select>
 
-  <button id="btnCamara">
+
+  <button
+    id="btnCamara"
+    disabled
+  >
+
     📷 ACTIVAR CÁMARA
+
   </button>
 
+
   <div class="camara">
-    <video id="video" autoplay muted playsinline></video>
+
+    <video
+      id="video"
+      autoplay
+      muted
+      playsinline
+    ></video>
+
   </div>
 
-  <div id="estado" class="estado">
+
+  <div
+    id="estado"
+    class="estado"
+  >
+
     Preparando sistema...
+
   </div>
 
-  <div id="mensaje" class="mensaje">
-    Selecciona un trabajador y activa la cámara.
+
+  <div
+    id="mensaje"
+    class="mensaje"
+  >
+
+    Cargando trabajadores...
+
   </div>
+
+
+  <div
+    id="resultado"
+    class="resultado"
+  >
+
+    <strong>
+      Resultado
+    </strong>
+
+    <span id="resultadoTexto"></span>
+
+  </div>
+
 
   <div class="instrucciones">
-    <strong>Recomendaciones:</strong><br>
-    • Coloca tu rostro frente a la cámara.<br>
-    • Mantén una iluminación adecuada.<br>
-    • Retira lentes oscuros o elementos que cubran el rostro.<br>
-    • Mira directamente a la cámara.<br>
+
+    <strong>
+      Recomendaciones:
+    </strong>
+
+    <br>
+
+    • Coloca tu rostro frente a la cámara.
+
+    <br>
+
+    • Mantén una iluminación adecuada.
+
+    <br>
+
+    • Retira lentes oscuros o elementos que cubran el rostro.
+
+    <br>
+
+    • Mira directamente a la cámara.
+
+    <br>
+
     • Mantén el rostro dentro del encuadre.
+
   </div>
+
 
 </div>
 
+
 <script>
+
+
+/* =====================================================
+   CONFIGURACIÓN
+===================================================== */
+
 
 const URL_APPS_SCRIPT =
   "https://script.google.com/macros/s/AKfycbx-ahXOqPqd1vIDsSH1YaRerx7Wo0hULU6beekVHNqZGLsHUkcVQfmC5UAkq-uPOghC/exec";
 
-const personalSelect = document.getElementById("personal");
-const btnCamara = document.getElementById("btnCamara");
-const video = document.getElementById("video");
-const mensaje = document.getElementById("mensaje");
-const estado = document.getElementById("estado");
+
+const URL_MODELOS =
+  "https://justadudewhohacks.github.io/face-api.js/models";
+
+
+/* =====================================================
+   ELEMENTOS
+===================================================== */
+
+
+const personalSelect =
+  document.getElementById(
+    "personal"
+  );
+
+
+const btnCamara =
+  document.getElementById(
+    "btnCamara"
+  );
+
+
+const video =
+  document.getElementById(
+    "video"
+  );
+
+
+const mensaje =
+  document.getElementById(
+    "mensaje"
+  );
+
+
+const estado =
+  document.getElementById(
+    "estado"
+  );
+
+
+const resultado =
+  document.getElementById(
+    "resultado"
+  );
+
+
+const resultadoTexto =
+  document.getElementById(
+    "resultadoTexto"
+  );
+
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+
+let trabajadores = [];
 
 let stream = null;
+
 let camaraActiva = false;
+
 let modelosCargados = false;
+
 let deteccionInterval = null;
 
 
-/* ============================================================
+/* =====================================================
    MENSAJES
-============================================================ */
-
-function mostrarMensaje(texto, tipo = "") {
-
-  mensaje.textContent = texto;
-
-  mensaje.className = "mensaje";
-
-  if (tipo === "exito") {
-    mensaje.classList.add("exito");
-  }
-
-  if (tipo === "error") {
-    mensaje.classList.add("error");
-  }
-}
+===================================================== */
 
 
-/* ============================================================
-   CARGAR TRABAJADORES
-============================================================ */
+function mostrarMensaje(
+  texto,
+  tipo = ""
+) {
 
-async function cargarTrabajadores() {
+  mensaje.textContent =
+    texto;
 
-  try {
+  mensaje.className =
+    "mensaje";
 
-    mostrarMensaje("Cargando trabajadores...");
 
-    const respuesta = await fetch(
-      URL_APPS_SCRIPT + "?accion=personalEnrolamiento"
+  if (
+    tipo === "exito"
+  ) {
+
+    mensaje.classList.add(
+      "exito"
     );
 
-    if (!respuesta.ok) {
-      throw new Error("No se pudo conectar con Apps Script.");
-    }
+  }
 
-    const trabajadores = await respuesta.json();
 
-    personalSelect.innerHTML =
-      '<option value="">Seleccione un trabajador</option>';
+  if (
+    tipo === "error"
+  ) {
 
-    trabajadores.forEach(persona => {
-
-      const option = document.createElement("option");
-
-      option.value = persona.idPersonal;
-
-      option.textContent =
-        persona.nombre +
-        " - " +
-        persona.idPersonal;
-
-      personalSelect.appendChild(option);
-
-    });
-
-    mostrarMensaje(
-      "Trabajadores cargados correctamente."
-    );
-
-  } catch (error) {
-
-    console.error(error);
-
-    personalSelect.innerHTML =
-      '<option value="">Error al cargar trabajadores</option>';
-
-    mostrarMensaje(
-      "No se pudieron cargar los trabajadores.",
+    mensaje.classList.add(
       "error"
     );
 
@@ -283,69 +526,335 @@ async function cargarTrabajadores() {
 }
 
 
-/* ============================================================
+/* =====================================================
+   CALLBACK JSONP
+===================================================== */
+
+/*
+   Apps Script llamará directamente
+   a esta función desde la respuesta JSONP.
+*/
+
+
+window.recibirPersonal =
+  function(datos) {
+
+    console.log(
+      "Personal recibido:",
+      datos
+    );
+
+
+    try {
+
+      if (
+        !Array.isArray(datos)
+      ) {
+
+        throw new Error(
+          "La respuesta no es una lista."
+        );
+
+      }
+
+
+      trabajadores =
+        datos;
+
+
+      personalSelect.innerHTML =
+        "";
+
+
+      const opcionInicial =
+        document.createElement(
+          "option"
+        );
+
+
+      opcionInicial.value =
+        "";
+
+
+      opcionInicial.textContent =
+        "Seleccione un trabajador";
+
+
+      personalSelect.appendChild(
+        opcionInicial
+      );
+
+
+      trabajadores.forEach(
+        function(persona) {
+
+          const opcion =
+            document.createElement(
+              "option"
+            );
+
+
+          opcion.value =
+            persona.idPersonal;
+
+
+          opcion.textContent =
+            persona.nombre +
+            " - " +
+            persona.idPersonal;
+
+
+          personalSelect.appendChild(
+            opcion
+          );
+
+        }
+      );
+
+
+      btnCamara.disabled =
+        false;
+
+
+      estado.textContent =
+        "Sistema listo.";
+
+
+      mostrarMensaje(
+        trabajadores.length +
+        " trabajador(es) cargado(s) correctamente.",
+        "exito"
+      );
+
+
+    } catch(error) {
+
+      console.error(
+        error
+      );
+
+
+      mostrarMensaje(
+        "Error procesando trabajadores: " +
+        error.message,
+        "error"
+      );
+
+    }
+
+  };
+
+
+/* =====================================================
+   CALLBACK DE ERROR
+===================================================== */
+
+
+window.onerror =
+  function(
+    mensajeError,
+    archivo,
+    linea,
+    columna,
+    error
+  ) {
+
+    console.error(
+      "Error:",
+      mensajeError,
+      archivo,
+      linea,
+      columna,
+      error
+    );
+
+  };
+
+
+/* =====================================================
+   CARGAR TRABAJADORES MEDIANTE JSONP
+===================================================== */
+
+
+function cargarTrabajadores() {
+
+  mostrarMensaje(
+    "Consultando trabajadores..."
+  );
+
+
+  estado.textContent =
+    "Conectando con Apps Script...";
+
+
+  /*
+    Creamos dinámicamente un SCRIPT.
+
+    Esto evita el problema CORS
+    que teníamos con fetch().
+  */
+
+
+  const script =
+    document.createElement(
+      "script"
+    );
+
+
+  const parametroCallback =
+    "recibirPersonal";
+
+
+  const separador =
+    URL_APPS_SCRIPT.includes("?")
+      ? "&"
+      : "?";
+
+
+  const url =
+    URL_APPS_SCRIPT +
+    separador +
+    "accion=personalEnrolamiento" +
+    "&callback=" +
+    parametroCallback +
+    "&t=" +
+    Date.now();
+
+
+  console.log(
+    "Consultando:",
+    url
+  );
+
+
+  script.src =
+    url;
+
+
+  script.async =
+    true;
+
+
+  script.onerror =
+    function() {
+
+      console.error(
+        "No se pudo cargar la respuesta JSONP."
+      );
+
+
+      mostrarMensaje(
+        "No se pudo conectar con Apps Script.",
+        "error"
+      );
+
+
+      estado.textContent =
+        "Error de conexión con el servidor.";
+
+    };
+
+
+  document.body.appendChild(
+    script
+  );
+
+}
+
+
+/* =====================================================
    CARGAR MODELOS FACE API
-============================================================ */
+===================================================== */
+
 
 async function cargarModelos() {
 
-  if (modelosCargados) {
+  if (
+    modelosCargados
+  ) {
+
     return;
+
   }
+
 
   try {
 
     estado.textContent =
       "Cargando modelos de reconocimiento facial...";
 
-    /*
-      Los modelos se cargarán desde el repositorio público
-      de face-api.js.
-    */
 
-    const MODEL_URL =
-      "https://justadudewhohacks.github.io/face-api.js/models";
+    mostrarMensaje(
+      "Preparando reconocimiento facial..."
+    );
 
-    await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
 
-    await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
+    await faceapi.nets.tinyFaceDetector.loadFromUri(
+      URL_MODELOS
+    );
 
-    await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
 
-    modelosCargados = true;
+    await faceapi.nets.faceLandmark68Net.loadFromUri(
+      URL_MODELOS
+    );
+
+
+    await faceapi.nets.faceRecognitionNet.loadFromUri(
+      URL_MODELOS
+    );
+
+
+    modelosCargados =
+      true;
+
 
     estado.textContent =
       "Modelos faciales cargados correctamente.";
 
-    console.log("Modelos cargados.");
 
-  } catch (error) {
+    console.log(
+      "Modelos Face API cargados."
+    );
 
-    console.error(error);
 
-    estado.textContent =
-      "Error cargando los modelos faciales.";
+  } catch(error) {
+
+    console.error(
+      "Error cargando modelos:",
+      error
+    );
+
 
     mostrarMensaje(
-      "No se pudieron cargar los modelos de reconocimiento facial.",
+      "No se pudieron cargar los modelos faciales.",
       "error"
     );
 
+
+    estado.textContent =
+      "Error cargando reconocimiento facial.";
+
+
     throw error;
+
   }
 
 }
 
 
-/* ============================================================
+/* =====================================================
    ACTIVAR CÁMARA
-============================================================ */
+===================================================== */
+
 
 async function activarCamara() {
 
   try {
 
-    if (!personalSelect.value) {
+
+    if (
+      !personalSelect.value
+    ) {
 
       mostrarMensaje(
         "Primero selecciona un trabajador.",
@@ -353,18 +862,34 @@ async function activarCamara() {
       );
 
       return;
+
     }
 
-    btnCamara.disabled = true;
+
+    btnCamara.disabled =
+      true;
+
 
     mostrarMensaje(
-      "Solicitando acceso a la cámara..."
+      "Preparando cámara y reconocimiento facial..."
     );
+
+
+    /*
+      Primero cargamos los modelos.
+    */
 
     await cargarModelos();
 
-    if (!navigator.mediaDevices ||
-        !navigator.mediaDevices.getUserMedia) {
+
+    /*
+      Verificar soporte del navegador.
+    */
+
+    if (
+      !navigator.mediaDevices ||
+      !navigator.mediaDevices.getUserMedia
+    ) {
 
       throw new Error(
         "Este navegador no permite acceso a la cámara."
@@ -372,132 +897,269 @@ async function activarCamara() {
 
     }
 
-    stream = await navigator.mediaDevices.getUserMedia({
 
-      video: {
-        facingMode: "user",
-        width: {
-          ideal: 640
+    estado.textContent =
+      "Solicitando permiso para utilizar la cámara...";
+
+
+    /*
+      SOLICITUD REAL DE CÁMARA
+    */
+
+    stream =
+      await navigator.mediaDevices.getUserMedia({
+
+        video: {
+
+          facingMode: {
+            ideal: "user"
+          },
+
+          width: {
+            ideal: 640
+          },
+
+          height: {
+            ideal: 480
+          }
+
         },
-        height: {
-          ideal: 480
-        }
-      },
 
-      audio: false
+        audio: false
 
-    });
+      });
 
-    video.srcObject = stream;
 
-    video.style.display = "block";
+    /*
+      Mostrar cámara.
+    */
 
-    camaraActiva = true;
+    video.srcObject =
+      stream;
+
+
+    video.style.display =
+      "block";
+
+
+    camaraActiva =
+      true;
+
 
     btnCamara.textContent =
       "📷 CÁMARA ACTIVADA";
 
+
     mostrarMensaje(
-      "Cámara activada. Coloca tu rostro frente a la cámara."
+      "Cámara activada correctamente.",
+      "exito"
     );
+
 
     estado.textContent =
       "Buscando rostro...";
 
+
     iniciarDeteccion();
 
-  } catch (error) {
 
-    console.error(error);
+  } catch(error) {
 
-    camaraActiva = false;
+    console.error(
+      "Error cámara:",
+      error
+    );
 
-    btnCamara.disabled = false;
+
+    camaraActiva =
+      false;
+
+
+    btnCamara.disabled =
+      false;
+
 
     mostrarMensaje(
-      "No se pudo activar la cámara: " + error.message,
+      "No se pudo activar la cámara: " +
+      error.message,
       "error"
     );
 
+
     estado.textContent =
-      "Revisa los permisos de cámara del navegador.";
+      "Verifica el permiso de cámara del navegador.";
 
   }
 
 }
 
 
-/* ============================================================
-   DETECCIÓN FACIAL
-============================================================ */
+/* =====================================================
+   INICIAR DETECCIÓN
+===================================================== */
+
 
 function iniciarDeteccion() {
 
-  if (deteccionInterval) {
-    clearInterval(deteccionInterval);
+  if (
+    deteccionInterval
+  ) {
+
+    clearInterval(
+      deteccionInterval
+    );
+
   }
 
-  deteccionInterval = setInterval(
-    detectarRostro,
-    1500
-  );
+
+  deteccionInterval =
+    setInterval(
+      detectarRostro,
+      1200
+    );
 
 }
 
 
-/* ============================================================
+/* =====================================================
    DETECTAR ROSTRO
-============================================================ */
+===================================================== */
+
 
 async function detectarRostro() {
 
-  if (!camaraActiva) {
+  if (
+    !camaraActiva
+  ) {
+
     return;
+
   }
 
-  if (!video.videoWidth || !video.videoHeight) {
+
+  if (
+    !video.videoWidth ||
+    !video.videoHeight
+  ) {
+
     return;
+
   }
+
 
   try {
 
-    const resultado =
+    const deteccion =
       await faceapi
         .detectSingleFace(
+
           video,
+
           new faceapi.TinyFaceDetectorOptions({
+
             inputSize: 320,
+
             scoreThreshold: 0.5
+
           })
+
         )
         .withFaceLandmarks()
         .withFaceDescriptor();
 
-    if (!resultado) {
+
+    /*
+      No se encontró rostro.
+    */
+
+    if (
+      !deteccion
+    ) {
 
       estado.textContent =
-        "No se detecta ningún rostro.";
+        "Buscando rostro...";
 
       return;
+
     }
 
+
+    /*
+      Rostro encontrado.
+    */
+
     estado.textContent =
-      "✅ Rostro detectado correctamente.";
+      "✅ Rostro detectado.";
+
 
     mostrarMensaje(
-      "Rostro detectado. Descriptor facial generado.",
+      "Rostro detectado correctamente.",
       "exito"
     );
 
+
+    /*
+      Descriptor facial.
+      face-api.js genera
+      normalmente 128 valores.
+    */
+
+    const descriptor =
+      Array.from(
+        deteccion.descriptor
+      );
+
+
     console.log(
       "Descriptor facial:",
-      Array.from(resultado.descriptor)
+      descriptor
     );
 
-  } catch (error) {
+
+    console.log(
+      "Cantidad de valores:",
+      descriptor.length
+    );
+
+
+    resultado.style.display =
+      "block";
+
+
+    resultadoTexto.textContent =
+      "Rostro detectado. Descriptor generado: " +
+      descriptor.length +
+      " valores.";
+
+
+    /*
+      Detenemos la detección
+      después de obtener un rostro.
+    */
+
+    clearInterval(
+      deteccionInterval
+    );
+
+
+    /*
+      Por ahora NO guardamos todavía
+      en Google Sheets.
+
+      Primero comprobamos que:
+
+      1. Cámara funciona.
+      2. Rostro funciona.
+      3. Descriptor funciona.
+
+      Después conectaremos guardarBiometria().
+    */
+
+
+  } catch(error) {
 
     console.error(
-      "Error detectando rostro:",
+      "Error en detección:",
       error
     );
 
@@ -506,9 +1168,80 @@ async function detectarRostro() {
 }
 
 
-/* ============================================================
-   EVENTO BOTÓN
-============================================================ */
+/* =====================================================
+   CAMBIO DE TRABAJADOR
+===================================================== */
+
+
+personalSelect.addEventListener(
+  "change",
+  function() {
+
+    /*
+      Si cambia el trabajador,
+      reiniciamos el estado.
+    */
+
+    resultado.style.display =
+      "none";
+
+
+    if (
+      personalSelect.value
+    ) {
+
+      const trabajador =
+        trabajadores.find(
+          function(persona) {
+
+            return (
+              String(
+                persona.idPersonal
+              ) ===
+              String(
+                personalSelect.value
+              )
+            );
+
+          }
+        );
+
+
+      if (
+        trabajador
+      ) {
+
+        mostrarMensaje(
+
+          "Trabajador seleccionado: " +
+          trabajador.nombre
+
+        );
+
+      }
+
+      estado.textContent =
+        "Listo para activar la cámara.";
+
+    } else {
+
+      mostrarMensaje(
+        "Selecciona un trabajador."
+      );
+
+      estado.textContent =
+        "Esperando selección.";
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   BOTÓN CÁMARA
+===================================================== */
+
 
 btnCamara.addEventListener(
   "click",
@@ -516,20 +1249,58 @@ btnCamara.addEventListener(
 );
 
 
-/* ============================================================
+/* =====================================================
    INICIO
-============================================================ */
+===================================================== */
+
 
 window.addEventListener(
   "load",
-  () => {
+  function() {
+
+    console.log(
+      "Sistema biométrico iniciado."
+    );
+
+
+    /*
+      Esperamos que face-api.js
+      esté disponible.
+    */
+
+    if (
+      typeof faceapi ===
+      "undefined"
+    ) {
+
+      mostrarMensaje(
+        "No se pudo cargar Face API.",
+        "error"
+      );
+
+
+      estado.textContent =
+        "Error cargando la librería facial.";
+
+
+      return;
+
+    }
+
+
+    estado.textContent =
+      "Sistema iniciado. Cargando trabajadores...";
+
 
     cargarTrabajadores();
 
   }
 );
 
+
 </script>
 
+
 </body>
+
 </html>
